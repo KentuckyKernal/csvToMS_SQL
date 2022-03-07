@@ -120,8 +120,8 @@ namespace CSVtoSQL
                 SqlCommand command = new SqlCommand(queryString, connection);
                 try {
                     connection.Open();
-
                     command.ExecuteReader();
+                    connection.Close();
 
                     DataInsertRowsList(useableFiles, fileTracking, targetdb, headerList, tableName_, con, tableContentList);
 
@@ -130,14 +130,29 @@ namespace CSVtoSQL
                 {
                     Console.WriteLine("Query: " + queryString);
                     DisplaySqlErrors(ex);
+                    // close connection or it will stay open
+                    connection.Close();
+                    // if the query fails move to the next file
+                    if (useableFiles.Count > fileTracking - 1)
+                    {
+                        Console.WriteLine("\r\n");
+                        Console.WriteLine("File [ " + tableName_ + " ] Upload Failed.");
+                        Console.WriteLine("\r\n");
+                        Console.WriteLine("-----------------------------------------------");
+
+                        ProcessFile pf = new ProcessFile();
+                        pf.SelectFile(targetdb, connectionString, useableFiles, fileTracking + 1);
+
+                    }
                 }
 
+                
             }
-           
+
         }
         private static void DataInsertRowsList(List<string> useableFiles, int fileTracking, string targetdb, List<string> headerList, string tableName_, string con, List<List<string>> tableContentList)
         {
-            
+            bool breakMessage = false;
             //insert rows
             string connectionString = @"" + con + "";
             
@@ -187,26 +202,45 @@ namespace CSVtoSQL
                         connection.Close();
                         tableContentString2 = "";
 
-                        
+                       
                     }
-                    catch(SqlException ex)
+                    catch (SqlException ex)
                     {
-                        Console.WriteLine("Query: " + fullQuery);
+
+                        breakMessage = true;
+                        //Turn 2 line off temp for 
+                        //Console.WriteLine("Query: " + fullQuery);
+                        connection.Close();
                         DisplaySqlErrors(ex);
+                        break;
+                        
+
+                        
+
                     }
                     
                 }
-                
-                Console.WriteLine("File [ " + tableName_ + " ] Upload Complete.");
-                Console.WriteLine("\r\n");
-                Console.WriteLine("-----------------------------------------------");
-                // Call Next File After Previous has completed
 
-                if (useableFiles.Count > fileTracking - 1 ) {
+                if (breakMessage) {
+                    Console.WriteLine("File [ " + tableName_ + " ] Upload Failed.");
+                    Console.WriteLine("\r\n");
+                    Console.WriteLine("-----------------------------------------------");
+                } else
+                {
+                    Console.WriteLine("File [ " + tableName_ + " ] Upload Complete.");
+                    Console.WriteLine("\r\n");
+                    Console.WriteLine("-----------------------------------------------");
+                }
+                
+
+                // Call Next File After Previous has completed
+                if (useableFiles.Count > fileTracking - 1)
+                {
                     ProcessFile pf = new ProcessFile();
                     pf.SelectFile(targetdb, connectionString, useableFiles, fileTracking + 1);
 
                 }
+
 
             }
         }
@@ -217,7 +251,7 @@ namespace CSVtoSQL
             {
                 Console.WriteLine("Index #" + i + "\n" +
                     "Error: " + exception.Errors[i].ToString() + "\n");
-                // Create a drop table query, output file and reason for drop in a SQL DB 
+                //Create a drop table query, output file and reason for drop in a SQL DB
             }
         }
     }
