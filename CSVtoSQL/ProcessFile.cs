@@ -12,7 +12,6 @@ namespace CSVtoSQL
     {
         public void SelectFile(string _db, string _con, List<string> useableFiles, int fileTracking) {
 
-            
             List<string> csvToList = new();
             List<string> csvList = new();
             List<string> headerList = new();

@@ -11,7 +11,9 @@ namespace CSVtoSQL
         public static void CheckFileExists()
         {
             // check a .txt file exists for reporting exception along with their 
-            // name without extensions
+            // name without
+            // 
+            
         }
 
 

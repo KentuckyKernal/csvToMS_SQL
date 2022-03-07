@@ -8,22 +8,24 @@ namespace MyApp
     {
         static void Main(string[] args)
         {
-
+            GlobalVars glv = new GlobalVars();
 
             Console.WriteLine("Enter Directory Where Files are stored: ");
-            string _path = @"" + Console.ReadLine() + "";
+            glv.Path = @"" + Console.ReadLine() + "";
 
             Console.WriteLine("\r\n");
 
             Console.WriteLine("Enter connection string: ");
-            string _con = @"" + Console.ReadLine() + "";
+            glv.Conn = @"" + Console.ReadLine() + "";
             Console.WriteLine("\r\n");
 
             Console.WriteLine("Please Type Destination Database: ");
-            string _db = @"" + Console.ReadLine() + "";
+            glv.Dtb = @"" + Console.ReadLine() + "";
+
+
 
             DirSelect start = new DirSelect();
-            start.Output(_path, _con, _db);
+            start.Output(glv.Path, glv.Conn, glv.Dtb);
 
         }
     }
