@@ -8,10 +8,11 @@ namespace CSVtoSQL
 {
     public class GlobalVars
     {
-        private string path = @"path"; 
-        public string Path { 
+        private string path = @"path";
+        public string Path
+        {
             get => path;
-            set => path = value; 
+            set => path = value;
         }
         public string conn = @"cons";
         public string Conn

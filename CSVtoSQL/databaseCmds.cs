@@ -128,8 +128,8 @@ namespace CSVtoSQL
                 }
                 catch (SqlException ex)
                 {
-                    Console.WriteLine("Query: " + queryString);
-                    DisplaySqlErrors(ex);
+                    // Log errors to .txt file -> format issues
+                    DisplaySqlErrors(ex, tableName_, queryString);
                     // close connection or it will stay open
                     connection.Close();
                     // if the query fails move to the next file
@@ -211,7 +211,7 @@ namespace CSVtoSQL
                         //Turn 2 line off temp for 
                         //Console.WriteLine("Query: " + fullQuery);
                         connection.Close();
-                        DisplaySqlErrors(ex);
+                        DisplaySqlErrors(ex, "dfsf", "ff");
                         break;
                         
 
@@ -245,12 +245,20 @@ namespace CSVtoSQL
             }
         }
 
-        private static void DisplaySqlErrors(SqlException exception)
+        private static void DisplaySqlErrors(SqlException exception, string tableName, string query)
         {
             for (int i = 0; i < exception.Errors.Count; i++)
             {
+                ExportSqlExceptions sl = new ExportSqlExceptions();
+                sl.CheckFileExists("File name : " + tableName + "\n");
+                sl.CheckFileExists("Index #" + i + " " +
+                    "Error: " + exception.Errors[i].ToString() + "\n");
+                sl.CheckFileExists("Query String: " + query + "\n");
+                sl.CheckFileExists("-------------------------------" + "\n");
+
                 Console.WriteLine("Index #" + i + "\n" +
                     "Error: " + exception.Errors[i].ToString() + "\n");
+
                 //Create a drop table query, output file and reason for drop in a SQL DB
             }
         }
